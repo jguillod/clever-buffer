@@ -26,7 +26,10 @@ class CleverBufferReader extends CleverBuffer {
         //     options = {};
         // }
     }
-
+    readString(...args) {
+        return this.getString(...args);
+    }
+    
     getString(options = {}) {
         const offsetSpecified = (options.offset != null);
         const {length, offset, encoding} = defaults(options, {
@@ -43,6 +46,10 @@ class CleverBufferReader extends CleverBuffer {
             this.offset += length;
         }
         return val;
+    }
+
+    readBytes(...args) {
+        return this.getBytes(...args);
     }
 
     getBytes(options = {}) {

@@ -145,6 +145,8 @@ console.log(reader.getBigInt64()); // "-1"
 
 Returns utf-8 encoded string of specified length
 
+`readString` is an alias of `getString`
+
 ```js
 var buf = Buffer.from([0x48, 0x45, 0x4C, 0x4C, 0x4F]);
 var reader = new CleverBufferReader(buf);
@@ -155,7 +157,7 @@ console.log(reader.getString({length: 5})); // "HELLO"
 
 #### Requiring the writer in your project
 ```js
-{ CleverBufferWriter } = require('@imed.ch/clever-buffer');
+const { CleverBufferWriter } = require('@imed.ch/clever-buffer');
 ```
 
 #### new CleverBufferWriter existingBuffer, [options]
@@ -285,7 +287,7 @@ Note that this module does not run any assertion and you have to deal with yours
 ```js
 try {
     let str = reader.getString({length: 5});
-    writer.setUInt32(/* value */ 87234, /* offset */ 15})
+    writer.setUInt32(/* value */ 87234, /* offset */ 15)
         .setDouble(34,553);
 } catch(e) {
   if (e instanceof TypeError) {
@@ -302,17 +304,28 @@ try {
 ## Common Functionality
 The following is common to CleverBufferReader and CleverBufferWriter (The examples only show reader)
 
-#### reader.getOffset()
+#### reader.offset
 Gets the current offset of the buffer
 ```js
 var buf = Buffer.from([0xFF, 0x02]);
 var reader = new CleverBufferReader(buf);
-console.log(reader.getOffset()); // 0
+console.log(reader.offset); // 0
 reader.getUInt8();
-console.log(reader.getOffset()); // 1
+console.log(reader.offset); // 1
 reader.getUInt8();
-console.log(reader.getOffset()); // 2  
+console.log(reader.offset); // 2  
 ```
+
+Sets the current offset of the buffer  
+<small>In most case you will set `offset` in the `options` parameter of read/write functions. But it is possible to set it manually with&nbsp;:</small>
+```js
+reader.offset = 3;
+writer.offset = 4;
+```
+For a reader `offset` should be in range of `0..reader.length`.
+
+#### reader.eob()
+This function returns `true` if offset is set passed the end of buffer.
 
 #### reader.skip(bytes)
 * bytes Number
@@ -322,9 +335,9 @@ Skips the current offset forward the specified bytes amount
 ```js
 var buf = Buffer.from([0xFF, 0x02]);
 var reader = new CleverBufferReader(buf);
-console.log(reader.getOffset()); // 0
+console.log(reader.offset); // 0
 reader.skip(2);
-console.log(reader.getOffset()); // 2  
+console.log(reader.offset); // 2  
 ```
 
 #### reader.skipTo(offset)
@@ -335,9 +348,9 @@ Skips to the specified offset
 ```js
 var buf = Buffer.from([0xFF, 0xFF, 0xFF, 0x01]);
 var reader = new CleverBufferReader(buf);
-console.log(reader.getOffset()); // 0
+console.log(reader.offset); // 0
 reader.skipTo(3);
-console.log(reader.getOffset()); // 3  
+console.log(reader.offset); // 3  
 ```
 
 #### reader.getBuffer()
@@ -364,9 +377,9 @@ console.log(buf);           // [0xFF, 0x02]
 
 ### Reader API
 
-```js
-getString(options = {})
-getBytes(options = {})
+```
+getString(options = {})   alias readString 
+getBytes(options = {})    alias readBytes
 readBigInt64(offset)
 readBigInt64BE(offset)
 readBigInt64LE(offset) 
@@ -414,7 +427,7 @@ getUInt(...args)           // alias to readUInt(...args)
 ```
 
 ### writer API
-```js
+```
 writeString(string, options = {})
 writeBytes(value, options = {})
 writeBigInt64(value, offset)

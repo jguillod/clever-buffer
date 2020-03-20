@@ -90,11 +90,22 @@ class CleverBuffer {
         return this.buffer;
     }
 
-    getOffset() {
-        return this.offset;
+    get offset() {
+        return this._offset;
     }
 
-    get length(){
+    set offset(value) {
+        this._offset = value;
+    }
+
+    /**
+     * @returns {boolean} - whether the current position is at the end of the buffer
+     */
+    eob() {
+        return this.offset < this.buffer.length;
+    }
+
+    get length() {
         return this.buffer.length;
     }
 

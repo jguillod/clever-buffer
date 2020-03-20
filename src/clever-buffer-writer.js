@@ -1,7 +1,7 @@
 const defaults = require('./defaults');
-const CleverBuffer = require('./clever-buffer-common');
+const CleverBufferReader = require('./clever-buffer-reader');
 
-class CleverBufferWriter extends CleverBuffer {
+class CleverBufferWriter extends CleverBufferReader {
 
     constructor(buffer, options = {}) {
         super(buffer, options);

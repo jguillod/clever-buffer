@@ -116,22 +116,22 @@ describe('CleverBufferReader', () => {
     const cleverBuffer = new CleverBufferReader(buf);
     cleverBuffer.getUInt8().should.eql(buf.readUInt8(0, true));
     cleverBuffer.getUInt8().should.eql(buf.readUInt8(1, true));
-    cleverBuffer.getOffset().should.eql(2);
+    cleverBuffer.offset.should.eql(2);
   });
 
   it('should skip bytes', () => {
     const cleverBuffer = new CleverBufferReader(buf);
     const returnVal = cleverBuffer.skip(4);
     (typeof returnVal).should.eql('undefined'); // Skipping shouldn't return a value
-    cleverBuffer.getOffset().should.eql(4);
+    cleverBuffer.offset.should.eql(4);
   });
 
   it('should skip to set offset', () => {
     const cleverBuffer = new CleverBufferReader(buf);
     cleverBuffer.skip(4);
-    cleverBuffer.getOffset().should.eql(4);
+    cleverBuffer.offset.should.eql(4);
     cleverBuffer.skipTo(6);
-    cleverBuffer.getOffset().should.eql(6);
+    cleverBuffer.offset.should.eql(6);
   });
 
   it('should be able to readUInt8 at a specific offset', () => {
@@ -139,7 +139,7 @@ describe('CleverBufferReader', () => {
       0x01, 0x02, 0x03, 0x04, 0x05
     ]));
     cleverBuffer.getUInt8(3).should.eql(4);
-    cleverBuffer.getOffset().should.eql(0);
+    cleverBuffer.offset.should.eql(0);
   }); //should not increment currentOffset
 
   it('should be able to readUInt16 at a specific offset', () => {
@@ -147,13 +147,13 @@ describe('CleverBufferReader', () => {
       0x01, 0x02, 0x03, 0x00, 0x05
     ]));
     cleverBuffer.getUInt16(2).should.eql(3);
-    cleverBuffer.getOffset().should.eql(0);
+    cleverBuffer.offset.should.eql(0);
   }); //should not increment currentOffset
 
   it('should get BigUInt64 at a specific offset', () => {
     const cleverBuffer = new CleverBufferReader(Buffer.from([0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]));
     cleverBuffer.getBigUInt64(2).should.eql(18446744073709551615n);
-    cleverBuffer.getOffset().should.eql(0);
+    cleverBuffer.offset.should.eql(0);
   }); //should not increment currentOffset
 
   it('should get string of specified length at a specified offset', () => {
@@ -161,7 +161,7 @@ describe('CleverBufferReader', () => {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x45, 0x4C, 0x4C, 0x4F
     ]));
     cleverBuffer.getString({length:5,offset: 5}).should.eql('HELLO');
-    cleverBuffer.getOffset().should.eql(0);
+    cleverBuffer.offset.should.eql(0);
   }); //should not increment currentOffset
 
   it('should get bytes', () => {
