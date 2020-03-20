@@ -1,6 +1,6 @@
 # @imed.ch/clever-buffer
 
-[![NPM](http://img.shields.io/npm/@imed.ch/clever-buffer.svg?style=flat)](https://npmjs.org/package/@imed.ch/clever-buffer)
+[![NPM Version](https://img.shields.io/npm/v/@imed.ch/clever-buffer.svg)](https://npmjs.org/package/@imed.ch/clever-buffer)
 [![License](http://img.shields.io/npm/l/clever-buffer.svg?style=flat)](https://github.com/jguillod/clever-buffer)
 
 [![Build Status](http://img.shields.io/travis/jguillod/clever-buffer.svg?style=flat)](http://travis-ci.org/jguillod/clever-buffer)
