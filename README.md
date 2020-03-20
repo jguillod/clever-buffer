@@ -1,12 +1,12 @@
 # clever-buffer
 
 
-[![NPM](http://img.shields.io/npm/v/clever-buffer.svg?style=flat)](https://npmjs.org/package/clever-buffer)
-[![License](http://img.shields.io/npm/l/clever-buffer.svg?style=flat)](https://github.com/Tabcorp/clever-buffer)
+[![NPM](http://img.shields.io/npm/v/clever-buffer.svg?style=flat)](https://npmjs.org/package/@imed.ch/clever-buffer)
+[![License](http://img.shields.io/npm/l/clever-buffer.svg?style=flat)](https://github.com/@imed.ch/clever-buffer)
 
-[![Build Status](http://img.shields.io/travis/Tabcorp/clever-buffer.svg?style=flat)](http://travis-ci.org/Tabcorp/clever-buffer)
-[![Dependencies](http://img.shields.io/david/Tabcorp/clever-buffer.svg?style=flat)](https://david-dm.org/Tabcorp/clever-buffer)
-[![Dev dependencies](http://img.shields.io/david/dev/Tabcorp/clever-buffer.svg?style=flat)](https://david-dm.org/Tabcorp/clever-buffer) [![Greenkeeper badge](https://badges.greenkeeper.io/Tabcorp/clever-buffer.svg)](https://greenkeeper.io/)
+[![Build Status](http://img.shields.io/travis/@imed.ch/clever-buffer.svg?style=flat)](http://travis-ci.org/@imed.ch/clever-buffer)
+[![Dependencies](http://img.shields.io/david/@imed.ch/clever-buffer.svg?style=flat)](https://david-dm.org/@imed.ch/clever-buffer)
+[![Dev dependencies](http://img.shields.io/david/dev/@imed.ch/clever-buffer.svg?style=flat)](https://david-dm.org/@imed.ch/clever-buffer) [![Greenkeeper badge](https://badges.greenkeeper.io/@imed.ch/clever-buffer.svg)](https://greenkeeper.io/)
 
 Buffer write and read utilities.
 
@@ -112,7 +112,7 @@ var reader = new CleverBufferReader(buf);
 console.log(reader.getInt32()); // -1
 ```
 
-#### reader.getUInt64([offset])
+#### reader.getBigUInt64([offset])
 * offset Number, Optional, Default: current buffer position
 
 Returns an Unsigned 64bit Integer from the current offset.
@@ -123,10 +123,10 @@ The value will be returned as a string
 ```js
 var buf = Buffer.from([0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF]);
 var reader = new CleverBufferReader(buf);
-console.log(reader.getUInt64()); // "18446744073709551615"
+console.log(reader.getBigUInt64()); // "18446744073709551615"
 ```
 
-#### reader.getInt64([offset])
+#### reader.getBigInt64([offset])
 * offset Number, Optional, Default: current buffer position
 
 Returns a Signed 64bit Integer from the current offset
@@ -137,7 +137,7 @@ The value will be returned as a string
 ```js
 var buf = Buffer.from([0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF]);
 var reader = new CleverBufferReader(buf);
-console.log(reader.getInt64()); // "-1"
+console.log(reader.getBigInt64()); // "-1"
 ```
 
 #### reader.getString([options])
@@ -151,7 +151,7 @@ Returns utf-8 encoded string of specified length
 ```js
 var buf = Buffer.from([0x48, 0x45, 0x4C, 0x4C, 0x4F]);
 var reader = new CleverBufferReader(buf);
-console.log(reader.getString(length: 5)); // "HELLO"
+console.log(reader.getString({length: 5})); // "HELLO"
 ```
 
 ## Writer Usage

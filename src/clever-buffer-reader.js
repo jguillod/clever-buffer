@@ -1,241 +1,247 @@
-const ref             = require('ref-napi');
+const defaults = require('./defaults');
+const CleverBuffer = require('./clever-buffer-common');
 
-const defaults        = require('./defaults');
-const CleverBuffer    = require('./clever-buffer-common');
-
-const checkOffset = (offset, ext, length) => {
-  if ((offset + ext) > length) {
-    throw new RangeError('Index out of range');
-  }
-};
-
+/**
+ * @class
+ * @param {Buffer} buffer data buffer to read from
+ * @param {object} [options]
+ * @param {number} [options.offset=0]
+ * @param {number} [options.bigEndian=false]
+ */
 class CleverBufferReader extends CleverBuffer {
 
-  constructor(buffer, options) {
-    super(buffer, options);
-    this.getUInt8 = this.getUInt8.bind(this);
-    this.getInt8 = this.getInt8.bind(this);
-    this.getUInt16 = this.getUInt16.bind(this);
-    this.getInt16 = this.getInt16.bind(this);
-    this.getUInt32 = this.getUInt32.bind(this);
-    this.getInt32 = this.getInt32.bind(this);
-    this.getUInt64 = this.getUInt64.bind(this);
-    this.getInt64 = this.getInt64.bind(this);
-    this.getString = this.getString.bind(this);
-    this.getBytes = this.getBytes.bind(this);
-    if (options == null) { options = {}; }
-  }
-
-// START NODE 8 LEGACY BUFFER FUNCTIONS
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-  legacyReadUInt8(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 1, this.buffer.length);
+    constructor(buffer, options = {}) {
+        super(buffer, options);
+        // this.getUInt8 = this.getUInt8.bind(this);
+        // this.getInt8 = this.getInt8.bind(this);
+        // this.getUInt16 = this.getUInt16.bind(this);
+        // this.getInt16 = this.getInt16.bind(this);
+        // this.getUInt32 = this.getUInt32.bind(this);
+        // this.getInt32 = this.getInt32.bind(this);
+        // this.getBigUInt64 = this.getBigUInt64.bind(this);
+        // this.getBigInt64 = this.getBigInt64.bind(this);
+        // this.getString = this.getString.bind(this);
+        // this.getBytes = this.getBytes.bind(this);
+        // if (options == null) {
+        //     options = {};
+        // }
     }
-    return this.buffer[offset];
-  }
 
-  legacyReadInt8(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 1, this.buffer.length);
+    getString(options = {}) {
+        const offsetSpecified = (options.offset != null);
+        const {length, offset, encoding} = defaults(options, {
+                length: 0,
+                offset: this.offset,
+                encoding: 'utf-8'
+            }
+        );
+        if (length === 0) {
+            return '';
+        }
+        const val = this.buffer.toString(encoding, offset, offset + length);
+        if (!offsetSpecified) {
+            this.offset += length;
+        }
+        return val;
     }
-    const val = this.buffer[offset];
-    if (!(val & 0x80)) { return val; } else { return ((0xff - val) + 1) * -1; }
-  }
 
-  legacyReadUInt16LE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 2, this.buffer.length);
+    getBytes(options = {}) {
+        const offsetSpecified = (options.offset != null);
+        const {length, offset} = defaults(options, {
+                length: 0,
+                offset: this.offset
+            }
+        );
+        if (length === 0) {
+            return [];
+        }
+        const val = Array.prototype.slice.call(this.buffer, offset, offset + length);
+        if (!offsetSpecified) {
+            this.offset += length;
+        }
+        return val;
     }
-    return this.buffer[offset] | (this.buffer[offset + 1] << 8);
-  }
 
-  legacyReadUInt16BE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 2, this.buffer.length);
+    /* ---------------- BEGIN OF AUTO-GENERATED CODE -------------------- */
+    getBigInt64(...args) {
+        return this.readBigInt64(...args);
     }
-    return (this.buffer[offset] << 8) | this.buffer[offset + 1];
-  }
 
-  legacyReadInt16LE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 2, this.buffer.length);
+    getBigUInt64(...args) {
+        return this.readBigUInt64(...args);
     }
-    const val = this.buffer[offset] | (this.buffer[offset + 1] << 8);
-    if (val & 0x8000) { return val | 0xFFFF0000; } else { return val; }
-  }
 
-  legacyReadInt16BE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 2, this.buffer.length);
+    getDouble8(...args) {
+        return this.readDouble8(...args);
     }
-    const val = this.buffer[offset + 1] | (this.buffer[offset] << 8);
-    if (val & 0x8000) { return val | 0xFFFF0000; } else { return val; }
-  }
 
-  legacyReadUInt32LE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 4, this.buffer.length);
+    getFloat4(...args) {
+        return this.readFloat4(...args);
     }
-    return (this.buffer[offset] | (this.buffer[offset + 1] << 8) | (this.buffer[offset + 2] << 16)) + (this.buffer[offset + 3] * 0x1000000);
-  }
 
-  legacyReadUInt32BE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 4, this.buffer.length);
+    getInt16(...args) {
+        return this.readInt16(...args);
     }
-    return (this.buffer[offset] * 0x1000000) + ((this.buffer[offset + 1] << 16) | (this.buffer[offset + 2] << 8) | this.buffer[offset + 3]);
-  }
 
-  legacyReadInt32LE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 4, this.buffer.length);
+    getInt32(...args) {
+        return this.readInt32(...args);
     }
-    return this.buffer[offset] | (this.buffer[offset + 1] << 8) | (this.buffer[offset + 2] << 16) | (this.buffer[offset + 3] << 24);
-  }
 
-  legacyReadInt32BE(offset, noAssert) {
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkOffset(offset, 4, this.buffer.length);
+    getInt(...args) {
+        return this.readInt(...args);
     }
-    return (this.buffer[offset] << 24) | (this.buffer[offset + 1] << 16) | (this.buffer[offset + 2] << 8) | this.buffer[offset + 3];
-  }
-// END NODE 8 LEGACY BUFFER FUNCTIONS
 
-  getUInt8(_offset) {
-    return this.legacyReadUInt8(_offset || this.offset++, this.noAssert);
-  }
+    getInt8(...args) {
+        return this.readInt8(...args);
+    }
 
-  getInt8(_offset) {
-    return this.legacyReadInt8(_offset || this.offset++, this.noAssert);
-  }
+    getUInt16(...args) {
+        return this.readUInt16(...args);
+    }
 
-  getUInt16(_offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyReadUInt16BE(offset, noAssert);
+    getUInt32(...args) {
+        return this.readUInt32(...args);
+    }
+
+    getUInt8(...args) {
+        return this.readUInt8(...args);
+    }
+
+    getUInt(...args) {
+        return this.readUInt(...args);
+    }
+
+    readBigInt64(offset){
+        return (this.bigEndian ? this.readBigInt64BE : this.readBigInt64LE).call(this, offset);
+    }
+
+    readBigInt64BE(offset){
+        return this._executeReadAndIncrement(8, Buffer.prototype.readBigInt64BE, offset);
     };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyReadUInt16LE(offset, noAssert);
-    };
-    return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
-  }
 
-  getInt16(_offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyReadInt16BE(offset, noAssert);
+    readBigInt64LE(offset) {
+        return this._executeReadAndIncrement(8, Buffer.prototype.readBigInt64LE, offset);
     };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyReadInt16LE(offset, noAssert);
-    };
-    return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
-  }
 
-  getUInt32(_offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyReadUInt32BE(offset, noAssert);
-    };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyReadUInt32LE(offset, noAssert);
-    };
-    return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
-  }
-
-  getInt32(_offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyReadInt32BE(offset, noAssert);
-    };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyReadInt32LE(offset, noAssert);
-    };
-    return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
-  }
-
-  getUInt64(_offset) {
-    let val;
-    const offset = _offset || this.offset;
-    if (!this.noAssert && ((this.buffer.length - offset) < 8)) {
-      throw new RangeError('Index out of range');
+    readBigUInt64(offset){
+        return (this.bigEndian ? this.readBigUInt64BE : this.readBigUInt64LE).call(this, offset);
     }
-    if (this.bigEndian) {
-      val = ref.readUInt64BE(this.buffer, offset);
-    } else {
-      val = ref.readUInt64LE(this.buffer, offset);
-    }
-    if (_offset === undefined) { this.offset += 8; }
-    return val.toString();
-  }
 
-  getInt64(_offset) {
-    let val;
-    const offset = _offset || this.offset;
-    if (!this.noAssert && ((this.buffer.length - offset) < 8)) {
-      throw new RangeError('Index out of range');
-    }
-    if (this.bigEndian) {
-      val = ref.readInt64BE(this.buffer, offset);
-    } else {
-      val = ref.readInt64LE(this.buffer, offset);
-    }
-    if (_offset === undefined) { this.offset += 8; }
-    return val.toString();
-  }
+    readBigUInt64BE(offset){
+        return this._executeReadAndIncrement(8, Buffer.prototype.readBigUInt64BE, offset);
+    };
 
-  getString(options = {}) {
-    const offsetSpecified = (options.offset != null);
-    const { length, offset, encoding } = defaults(options, {
-      length: 0,
-      offset: this.offset,
-      encoding: 'utf-8'
-    }
-    );
-    if (length === 0) { return ''; }
-    const val = this.buffer.toString(encoding, offset, offset + length);
-    if (!offsetSpecified) { this.offset += length; }
-    return val;
-  }
+    readBigUInt64LE(offset) {
+        return this._executeReadAndIncrement(8, Buffer.prototype.readBigUInt64LE, offset);
+    };
 
-  getBytes(options = {}) {
-    const offsetSpecified = (options.offset != null);
-    const { length, offset } = defaults(options, {
-      length: 0,
-      offset: this.offset
+    readDouble8(offset){
+        return (this.bigEndian ? this.readDouble8BE : this.readDouble8LE).call(this, offset);
     }
-    );
-    if (length === 0) { return []; }
-    const val = Array.prototype.slice.call(this.buffer, offset, offset + length);
-    if (!offsetSpecified) { this.offset += length; }
-    return val;
-  }
+
+    readDouble8BE(offset){
+        return this._executeReadAndIncrement(1, Buffer.prototype.readDouble8BE, offset);
+    };
+
+    readDouble8LE(offset) {
+        return this._executeReadAndIncrement(1, Buffer.prototype.readDouble8LE, offset);
+    };
+
+    readFloat4(offset){
+        return (this.bigEndian ? this.readFloat4BE : this.readFloat4LE).call(this, offset);
+    }
+
+    readFloat4BE(offset){
+        return this._executeReadAndIncrement(0.5, Buffer.prototype.readFloat4BE, offset);
+    };
+
+    readFloat4LE(offset) {
+        return this._executeReadAndIncrement(0.5, Buffer.prototype.readFloat4LE, offset);
+    };
+
+    readInt16(offset){
+        return (this.bigEndian ? this.readInt16BE : this.readInt16LE).call(this, offset);
+    }
+
+    readInt16BE(offset){
+        return this._executeReadAndIncrement(2, Buffer.prototype.readInt16BE, offset);
+    };
+
+    readInt16LE(offset) {
+        return this._executeReadAndIncrement(2, Buffer.prototype.readInt16LE, offset);
+    };
+
+    readInt32(offset){
+        return (this.bigEndian ? this.readInt32BE : this.readInt32LE).call(this, offset);
+    }
+
+    readInt32BE(offset){
+        return this._executeReadAndIncrement(4, Buffer.prototype.readInt32BE, offset);
+    };
+
+    readInt32LE(offset) {
+        return this._executeReadAndIncrement(4, Buffer.prototype.readInt32LE, offset);
+    };
+
+    readInt(offset, byteLength){
+        return (this.bigEndian ? this.readIntBE : this.readIntLE).call(this, offset, byteLength);
+    }
+
+    readIntBE(offset, byteLength){
+        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readIntBE, offset, byteLength);
+    };
+
+    readIntLE(offset, byteLength) {
+        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readIntLE, offset, byteLength);
+    };
+
+    readInt8(offset){
+        return this._executeReadAndIncrement(1, Buffer.prototype.readInt8, offset);
+    };
+
+    readUInt16(offset){
+        return (this.bigEndian ? this.readUInt16BE : this.readUInt16LE).call(this, offset);
+    }
+
+    readUInt16BE(offset){
+        return this._executeReadAndIncrement(2, Buffer.prototype.readUInt16BE, offset);
+    };
+
+    readUInt16LE(offset) {
+        return this._executeReadAndIncrement(2, Buffer.prototype.readUInt16LE, offset);
+    };
+
+    readUInt32(offset){
+        return (this.bigEndian ? this.readUInt32BE : this.readUInt32LE).call(this, offset);
+    }
+
+    readUInt32BE(offset){
+        return this._executeReadAndIncrement(4, Buffer.prototype.readUInt32BE, offset);
+    };
+
+    readUInt32LE(offset) {
+        return this._executeReadAndIncrement(4, Buffer.prototype.readUInt32LE, offset);
+    };
+
+    readUInt8(offset){
+        return this._executeReadAndIncrement(1, Buffer.prototype.readUInt8, offset);
+    };
+
+    readUInt(offset, byteLength){
+        return (this.bigEndian ? this.readUIntBE : this.readUIntLE).call(this, offset, byteLength);
+    }
+
+    readUIntBE(offset, byteLength){
+        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readUIntBE, offset, byteLength);
+    };
+
+    readUIntLE(offset, byteLength) {
+        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readUIntLE, offset, byteLength);
+    };
+
+
+    /* ---------------- END OF AUTO-GENERATED CODE -------------------- */
+
 }
 
 module.exports = CleverBufferReader;

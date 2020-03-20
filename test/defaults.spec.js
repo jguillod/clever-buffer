@@ -1,4 +1,4 @@
-const should   = require('should');
+// const should   = require('should');
 const defaults = require(`${SRC}/defaults`);
 
 describe('defaults', () => {
@@ -13,7 +13,7 @@ describe('defaults', () => {
   it('adds unset properties', () => {
     const obj = { a: 1 };
     const res = defaults(obj, { b: 2 });
-    obj.should.eql({ a: 1, b: 2 });
+    obj.should.eql({ a: 1 });
     res.should.eql({ a: 1, b: 2 });
   });
 

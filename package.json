@@ -1,24 +1,22 @@
 {
-  "name": "clever-buffer",
-  "version": "3.0.1",
+  "name": "@imed.ch/clever-buffer",
+  "version": "3.0.2",
   "description": "Buffer utilities",
-  "author": "Tabcorp Digital Technology Team",
+  "author": "imed.ch (original forked from Tabcorp Digital Technology Team, https://github.com/Tabcorp/clever-buffer.git)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Tabcorp/clever-buffer.git"
+    "url": "https://github.com/jguillod/clever-buffer.git"
   },
   "bugs": {
-    "url": "https://github.com/Tabcorp/clever-buffer/issues"
+    "url": "https://github.com/jguillod/clever-buffer/issues"
   },
   "main": "src/clever-buffer.js",
   "scripts": {
     "test": "mocha \"test/**/*.js\"",
     "prepublish": "npm test"
   },
-  "dependencies": {
-    "ref-napi": "1.4.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "cli-table": "^0.3.1",
     "lodash": "^4.17.15",
