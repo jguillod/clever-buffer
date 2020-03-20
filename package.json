@@ -1,6 +1,6 @@
 {
   "name": "@imed.ch/clever-buffer",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Buffer utilities",
   "author": "imed.ch (original forked from Tabcorp Digital Technology Team, https://github.com/Tabcorp/clever-buffer.git)",
   "license": "MIT",
