@@ -1,12 +1,11 @@
-# clever-buffer
+# @imed.ch/clever-buffer
 
+[![NPM](http://img.shields.io/npm/@imed.ch/clever-buffer.svg?style=flat)](https://npmjs.org/package/@imed.ch/clever-buffer)
+[![License](http://img.shields.io/npm/l/clever-buffer.svg?style=flat)](https://github.com/jguillod/clever-buffer)
 
-[![NPM](http://img.shields.io/npm/v/clever-buffer.svg?style=flat)](https://npmjs.org/package/@imed.ch/clever-buffer)
-[![License](http://img.shields.io/npm/l/clever-buffer.svg?style=flat)](https://github.com/@imed.ch/clever-buffer)
-
-[![Build Status](http://img.shields.io/travis/@imed.ch/clever-buffer.svg?style=flat)](http://travis-ci.org/@imed.ch/clever-buffer)
-[![Dependencies](http://img.shields.io/david/@imed.ch/clever-buffer.svg?style=flat)](https://david-dm.org/@imed.ch/clever-buffer)
-[![Dev dependencies](http://img.shields.io/david/dev/@imed.ch/clever-buffer.svg?style=flat)](https://david-dm.org/@imed.ch/clever-buffer) [![Greenkeeper badge](https://badges.greenkeeper.io/@imed.ch/clever-buffer.svg)](https://greenkeeper.io/)
+[![Build Status](http://img.shields.io/travis/jguillod/clever-buffer.svg?style=flat)](http://travis-ci.org/jguillod/clever-buffer)
+[![Dependencies](http://img.shields.io/david/jguillod/clever-buffer.svg?style=flat)](https://david-dm.org/jguillod/clever-buffer)
+[![Dev dependencies](http://img.shields.io/david/dev/jguillod/clever-buffer.svg?style=flat)](https://david-dm.org/@imed.ch/clever-buffer) [![Known Vulnerabilities](https://snyk.io/test/github/jguillod/clever-buffer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/jguillod/clever-buffer?targetFile=package.json)
 
 Buffer write and read utilities.
 
@@ -14,11 +13,10 @@ CleverBuffer adds functionality that is missing from the node Buffer class
 
 * Keeps track of the offset for you
 * One time specification of endian-ness and whether to assert on buffer length
-* 64 bit integer support. We use [ref](https://github.com/node-ffi-napi/ref-napi) under the hood for our 64 bit numbers
-
+* 64 bit integer support. We dont use any non standard NodeJS 12.x dependencies.
 ## Installation
 ``` js
-npm install clever-buffer
+npm install @imed.ch/clever-buffer
 ```
 
 _NOTE_: Examples below in javascript
@@ -27,7 +25,7 @@ _NOTE_: Examples below in javascript
 
 #### Requiring the reader in your project
 ``` js
-{ CleverBufferReader } = require('clever-buffer');
+{ CleverBufferReader } = require('@imed.ch/clever-buffer');
 ```
 
 #### new CleverBufferReader existingBuffer, [options]
@@ -157,7 +155,7 @@ console.log(reader.getString({length: 5})); // "HELLO"
 
 #### Requiring the writer in your project
 ```js
-{ CleverBufferWriter } = require('clever-buffer');
+{ CleverBufferWriter } = require('@imed.ch/clever-buffer');
 ```
 
 #### new CleverBufferWriter existingBuffer, [options]
