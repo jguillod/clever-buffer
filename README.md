@@ -34,12 +34,11 @@ _NOTE_: Examples below in javascript
 * existingBuffer Buffer
 * options
   * offset Number, Optional, Default: 0
-  * noAssert Boolean, Optional, Default: true
   * bigEndian Boolean, Optional, Default: false
 
 Allocates a new CleverBufferReader with an internal buffer of the specified existingBuffer
 ``` js
-var reader = new CleverBufferReader(existingBuffer, { offset: 0, noAssert: true, bigEndian: false});
+var reader = new CleverBufferReader(existingBuffer, { offset: 0, bigEndian: false});
 ```
 
 #### reader.getUInt8([offset])
@@ -86,8 +85,8 @@ Returns a Signed 16bit Integer from the current offset
 ```js
 var buf = Buffer.from([0xFF, 0xFF, 0x02, 0x00]);
 var reader = new CleverBufferReader(buf);
-console.log(reader.getInt16()); # -1
-console.log(reader.getInt16()); # 2
+console.log(reader.getInt16()); // -1
+console.log(reader.getInt16()); // 2
 ```
 
 #### reader.getUInt32([offset])
@@ -165,12 +164,24 @@ console.log(reader.getString({length: 5})); // "HELLO"
 * existingBuffer Buffer
 * options
   * offset Number, Optional, Default: 0
-  * noAssert Boolean, Optional, Default: true
   * bigEndian Boolean, Optional, Default: false
 
 Allocates a new CleverBufferWriter with an internal buffer of the specified existingBuffer
 ```js
-var writer = new CleverBufferWriter(existingBuffer, {offset: 0, noAssert: true, bigEndian: false});
+var writer = new CleverBufferWriter(existingBuffer, {offset: 0, bigEndian: false});
+```
+
+#### Any writer returns itself and therefore is chainable
+
+```js
+writer.writeUInt8(255);
+writer.writeUInt8(2);
+```
+
+is equivalent to :
+
+```js
+writer.writeUInt8(255).writeUInt8(2);
 ```
 
 #### writer.writeUInt8(value, [offset])
@@ -270,6 +281,26 @@ var len = writer.writeString("héllo");
 console.log(len, buf); // 6, [0x68, 0xc3, 0xa9, 0x6c, 0x6c, 0x6f, 0x00, 0x00]
 ```
 
+## Error Handling
+
+Note that this module does not run any assertion and you have to deal with yourself&nbsp;:
+```js
+try {
+    let str = reader.getString({length: 5});
+    writer.setUInt32(/* value */ 87234, /* offset */ 15})
+        .setDouble(34,553);
+} catch(e) {
+  if (e instanceof TypeError) {
+    // statements to handle TypeError exceptions
+  } else if (e instanceof RangeError) {
+    // statements to handle RangeError exceptions
+  } else {
+    // statements to handle any unspecified exceptions
+    logMyErrors(e); // pass exception object to error handler
+  }
+
+}
+```
 ## Common Functionality
 The following is common to CleverBufferReader and CleverBufferWriter (The examples only show reader)
 
@@ -329,6 +360,109 @@ var reader = new CleverBufferReader(buf);
 reader.getUInt8();
 console.log(reader.trim()); // [0xFF]
 console.log(buf);           // [0xFF, 0x02]
+```
+
+## API signatures
+
+### Reader API
+
+```js
+getString(options = {})
+getBytes(options = {})
+readBigInt64(offset)
+readBigInt64BE(offset)
+readBigInt64LE(offset) 
+readBigUInt64(offset)
+readBigUInt64BE(offset)
+readBigUInt64LE(offset) 
+readDouble8(offset)
+readDouble8BE(offset)
+readDouble8LE(offset) 
+readFloat4(offset)
+readFloat4BE(offset)
+readFloat4LE(offset) 
+readInt16(offset)
+readInt16BE(offset)
+readInt16LE(offset) 
+readInt32(offset)
+readInt32BE(offset)
+readInt32LE(offset) 
+readInt(offset, byteLength)
+readIntBE(offset, byteLength)
+readIntLE(offset, byteLength) 
+readInt8(offset)
+readUInt16(offset)
+readUInt16BE(offset)
+readUInt16LE(offset) 
+readUInt32(offset)
+readUInt32BE(offset)
+readUInt32LE(offset) 
+readUInt8(offset)
+readUInt(offset, byteLength)
+readUIntBE(offset, byteLength)
+readUIntLE(offset, byteLength) 
+getBigInt64(...args)       // alias to readBigInt64(...args)
+getBigUInt64(...args)      // alias to readBigUInt64(...args)
+getDouble8(...args)        // alias to readDouble8(...args)
+getFloat4(...args)         // alias to readFloat4(...args)
+getInt16(...args)          // alias to readInt16(...args)
+getInt32(...args)          // alias to readInt32(...args)
+getInt(...args)            // alias to readInt(...args)
+getInt8(...args)           // alias to readInt8(...args)
+getUInt16(...args)         // alias to readUInt16(...args)
+getUInt32(...args)         // alias to readUInt32(...args)
+getUInt8(...args)          // alias to readUInt8(...args)
+getUInt(...args)           // alias to readUInt(...args)
+```
+
+### writer API
+```js
+writeString(string, options = {})
+writeBytes(value, options = {})
+writeBigInt64(value, offset)
+writeBigInt64BE(value, offset)
+writeBigInt64LE(value, offset) 
+writeBigUInt64(value, offset)
+writeBigUInt64BE(value, offset)
+writeBigUInt64LE(value, offset) 
+writeDouble8(value, offset)
+writeDouble8BE(value, offset)
+writeDouble8LE(value, offset) 
+writeFloat4(value, offset)
+writeFloat4BE(value, offset)
+writeFloat4LE(value, offset) 
+writeInt16(value, offset)
+writeInt16BE(value, offset)
+writeInt16LE(value, offset) 
+writeInt32(value, offset)
+writeInt32BE(value, offset)
+writeInt32LE(value, offset) 
+writeInt8(value, offset)
+writeInt(value, offset, byteLength)
+writeIntBE(value, offset, byteLength)
+writeIntLE(value, offset, byteLength) 
+writeUInt16(value, offset)
+writeUInt16BE(value, offset)
+writeUInt16LE(value, offset) 
+writeUInt32(value, offset)
+writeUInt32BE(value, offset)
+writeUInt32LE(value, offset) 
+writeUInt8(value, offset)
+writeUInt(value, offset, byteLength)
+writeUIntBE(value, offset, byteLength)
+writeUIntLE(value, offset, byteLength) 
+setBigInt64(...args)       // alias to writeBigInt64(...args)
+setBigUInt64(...args)      // alias to writeBigUInt64(...args)
+setDouble8(...args)        // alias to writeDouble8(...args)
+setFloat4(...args)         // alias to writeFloat4(...args)
+setInt16(...args)          // alias to writeInt16(...args)
+setInt32(...args)          // alias to writeInt32(...args)
+setInt8(...args)           // alias to writeInt8(...args)
+setInt(...args)            // alias to writeInt(...args)
+setUInt16(...args)         // alias to writeUInt16(...args)
+setUInt32(...args)         // alias to writeUInt32(...args)
+setUInt8(...args)          // alias to writeUInt8(...args)
+setUInt(...args)           // alias to writeUInt(...args)
 ```
 
 ## Testing

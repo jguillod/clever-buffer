@@ -62,6 +62,54 @@ class CleverBufferWriter extends CleverBuffer {
 
     /* ---------------- BEGIN OF AUTO-GENERATED CODE -------------------- */
 
+    setBigInt64(...args) {
+        return this.writeBigInt64(...args);
+    }
+
+    setBigUInt64(...args) {
+        return this.writeBigUInt64(...args);
+    }
+
+    setDouble(...args) {
+        return this.writeDouble(...args);
+    }
+
+    setFloat(...args) {
+        return this.writeFloat(...args);
+    }
+
+    setInt16(...args) {
+        return this.writeInt16(...args);
+    }
+
+    setInt32(...args) {
+        return this.writeInt32(...args);
+    }
+
+    setInt8(...args) {
+        return this.writeInt8(...args);
+    }
+
+    setInt(...args) {
+        return this.writeInt(...args);
+    }
+
+    setUInt16(...args) {
+        return this.writeUInt16(...args);
+    }
+
+    setUInt32(...args) {
+        return this.writeUInt32(...args);
+    }
+
+    setUInt8(...args) {
+        return this.writeUInt8(...args);
+    }
+
+    setUInt(...args) {
+        return this.writeUInt(...args);
+    }
+
     writeBigInt64(value, offset) {
         return (this.bigEndian ? this.writeBigInt64BE : this.writeBigInt64LE).call(this, value, offset);
     }
@@ -86,28 +134,28 @@ class CleverBufferWriter extends CleverBuffer {
         return this._executeWriteAndIncrement(8, Buffer.prototype.writeBigUInt64LE, value, offset);
     };
 
-    writeDouble8(value, offset) {
-        return (this.bigEndian ? this.writeDouble8BE : this.writeDouble8LE).call(this, value, offset);
+    writeDouble(value, offset) {
+        return (this.bigEndian ? this.writeDoubleBE : this.writeDoubleLE).call(this, value, offset);
     }
 
-    writeDouble8BE(value, offset) {
-        return this._executeWriteAndIncrement(1, Buffer.prototype.writeDouble8BE, value, offset);
+    writeDoubleBE(value, offset) {
+        return this._executeWriteAndIncrement(1, Buffer.prototype.writeDoubleBE, value, offset);
     };
 
-    writeDouble8LE(value, offset) {
-        return this._executeWriteAndIncrement(1, Buffer.prototype.writeDouble8LE, value, offset);
+    writeDoubleLE(value, offset) {
+        return this._executeWriteAndIncrement(1, Buffer.prototype.writeDoubleLE, value, offset);
     };
 
-    writeFloat4(value, offset) {
-        return (this.bigEndian ? this.writeFloat4BE : this.writeFloat4LE).call(this, value, offset);
+    writeFloat(value, offset) {
+        return (this.bigEndian ? this.writeFloatBE : this.writeFloatLE).call(this, value, offset);
     }
 
-    writeFloat4BE(value, offset) {
-        return this._executeWriteAndIncrement(0.5, Buffer.prototype.writeFloat4BE, value, offset);
+    writeFloatBE(value, offset) {
+        return this._executeWriteAndIncrement(0.5, Buffer.prototype.writeFloatBE, value, offset);
     };
 
-    writeFloat4LE(value, offset) {
-        return this._executeWriteAndIncrement(0.5, Buffer.prototype.writeFloat4LE, value, offset);
+    writeFloatLE(value, offset) {
+        return this._executeWriteAndIncrement(0.5, Buffer.prototype.writeFloatLE, value, offset);
     };
 
     writeInt16(value, offset) {
