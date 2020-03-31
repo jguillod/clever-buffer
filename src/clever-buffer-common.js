@@ -34,11 +34,14 @@ class CleverBuffer {
 	 * Selection is made by taking functions of both classes with same name.
 	 */
 	static types() {
-		const Reader = require('./clever-buffer-reader'),
-			Writer = require('./clever-buffer-writer');
-		const rList = Object.getOwnPropertyNames(Reader.prototype).filter(name => !['constructor'].includes(name)),
-			wList = Object.getOwnPropertyNames(Writer.prototype).filter(name => !['constructor'].includes(name));
-		return rList.filter(name => wList.includes(name));
+		if (!this._types) {
+			const Reader = require('./clever-buffer-reader'),
+				Writer = require('./clever-buffer-writer');
+			const rList = Object.getOwnPropertyNames(Reader.prototype).filter(name => !['constructor'].includes(name)),
+				wList = Object.getOwnPropertyNames(Writer.prototype).filter(name => !['constructor'].includes(name));
+				this._types = rList.filter(name => wList.includes(name));
+		}
+		return this._types;
 	}
 
 	_realOffset(_offset) {
