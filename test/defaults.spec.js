@@ -24,3 +24,4 @@ describe('defaults', () => {
     res.should.eql({ a: false });
   });
 });
+

@@ -1,5 +1,9 @@
 const defaults = require('./defaults');
 const CleverBuffer = require('./clever-buffer-common');
+const ieee754ReadFn = require('ieee754').read,
+	ieee754Read = function (offset, isLE, mLen, nBytes) {
+		return ieee754ReadFn( /* buffer */ this, offset, isLE, mLen, nBytes);
+	};
 
 /**
  * @class
@@ -10,244 +14,225 @@ const CleverBuffer = require('./clever-buffer-common');
  */
 class CleverBufferReader extends CleverBuffer {
 
-    constructor(buffer, options = {}) {
-        super(buffer, options);
-        // this.getUInt8 = this.getUInt8.bind(this);
-        // this.getInt8 = this.getInt8.bind(this);
-        // this.getUInt16 = this.getUInt16.bind(this);
-        // this.getInt16 = this.getInt16.bind(this);
-        // this.getUInt32 = this.getUInt32.bind(this);
-        // this.getInt32 = this.getInt32.bind(this);
-        // this.getBigUInt64 = this.getBigUInt64.bind(this);
-        // this.getBigInt64 = this.getBigInt64.bind(this);
-        // this.getString = this.getString.bind(this);
-        // this.getBytes = this.getBytes.bind(this);
-        // if (options == null) {
-        //     options = {};
-        // }
-    }
-    readString(...args) {
-        return this.getString(...args);
-    }
-    
-    getString(options = {}) {
-        const offsetSpecified = (options.offset != null);
-        const {length, offset, encoding} = defaults(options, {
-                length: 0,
-                offset: this.offset,
-                encoding: 'utf-8'
-            }
-        );
-        if (length === 0) {
-            return '';
-        }
-        const val = this.buffer.toString(encoding, offset, offset + length);
-        if (!offsetSpecified) {
-            this.offset += length;
-        }
-        return val;
-    }
+	constructor(buffer, options = {}) {
+		super(buffer, options);
+	}
 
-    readBytes(...args) {
-        return this.getBytes(...args);
-    }
+	/**
+	 * Read a string
+	 * @param {object} [options]
+	 * @param {object} [options.length] number of bytes to read (byte length ≠ char length depending on encoding).
+	 * When not specified, will read to the end of buffer.
+	 * @param {object} [options.offset] Number of bytes to skip before starting to read string.
+	 *  Default to current reader offset.
+	 * @param {object} [options.encoding=utf8] The character encoding of string
+	 * @returns {String} - the decoded string.
+	 */
+	AsString(options = {}) {
+		const offsetSpecified = (options.offset != null);
+		const {
+			length,
+			offset,
+			encoding
+		} = defaults(options, {
+			length: 0,
+			offset: this.offset,
+			encoding: 'utf8'
+		});
+		if (length === 0) {
+			return '';
+		}
+		const val = this.buffer.toString(encoding, offset, offset + length);
+		if (!offsetSpecified) {
+			this.offset += length;
+		}
+		return val;
+	}
 
-    getBytes(options = {}) {
-        const offsetSpecified = (options.offset != null);
-        const {length, offset} = defaults(options, {
-                length: 0,
-                offset: this.offset
-            }
-        );
-        if (length === 0) {
-            return [];
-        }
-        const val = Array.prototype.slice.call(this.buffer, offset, offset + length);
-        if (!offsetSpecified) {
-            this.offset += length;
-        }
-        return val;
-    }
+	/**
+	 * 
+	 * @param {object} option see {@link AsString} but enforce `option.encoding = utf8`
+	 */
+	UTF8(option = {}) {
+		option.encoding = `utf8`;
+		return this.AsString(option);
+	}
 
-    /* ---------------- BEGIN OF AUTO-GENERATED CODE -------------------- */
-    getBigInt64(...args) {
-        return this.readBigInt64(...args);
-    }
+	Bytes(options = {}) {
+		const offsetSpecified = (options.offset != null);
+		const {
+			length,
+			offset
+		} = defaults(options, {
+			length: 0,
+			offset: this.offset
+		});
+		if (length === 0) {
+			return [];
+		}
+		const val = Array.prototype.slice.call(this.buffer, offset, offset + length);
+		if (!offsetSpecified) {
+			this.offset += length;
+		}
+		return val;
+	}
 
-    getBigUInt64(...args) {
-        return this.readBigUInt64(...args);
-    }
+	Float24_32(offset) {
+		return (this.bigEndian ? this.Float24_32BE : this.Float24_32LE).call(this, offset);
+	}
 
-    getDouble(...args) {
-        return this.readDouble(...args);
-    }
+	Float24_32BE(offset) {
+		return this._executeReadAndIncrement(4, ieee754Read, offset, false, 24, 4); // offset, isLE, mLen, nBytes
+	}
 
-    getFloat(...args) {
-        return this.readFloat(...args);
-    }
+	Float24_32LE(offset) {
+		return this._executeReadAndIncrement(4, ieee754Read, offset, true, 24, 4);
+	}
 
-    getInt16(...args) {
-        return this.readInt16(...args);
-    }
+	SFloat12_16(offset) {
+		return (this.bigEndian ? this.SFloat12_16BE : this.SFloat12_16LE).call(this, offset);
+	}
+	SFloat12_16BE(offset) {
+		return this._executeReadAndIncrement(2, ieee754Read, offset, false, 12, 2);
+	}
 
-    getInt32(...args) {
-        return this.readInt32(...args);
-    }
+	SFloat12_16LE(offset) {
+		return this._executeReadAndIncrement(2, ieee754Read, offset, true, 12, 2);
+	}
 
-    getInt(...args) {
-        return this.readInt(...args);
-    }
+	BigInt64(offset) {
+		return (this.bigEndian ? this.BigInt64BE : this.BigInt64LE).call(this, offset);
+	}
 
-    getInt8(...args) {
-        return this.readInt8(...args);
-    }
+	BigInt64BE(offset) {
+		return this._executeReadAndIncrement(8, Buffer.prototype.readBigInt64BE, offset);
+	}
 
-    getUInt16(...args) {
-        return this.readUInt16(...args);
-    }
+	BigInt64LE(offset) {
+		return this._executeReadAndIncrement(8, Buffer.prototype.readBigInt64LE, offset);
+	}
 
-    getUInt32(...args) {
-        return this.readUInt32(...args);
-    }
+	BigUInt64(offset) {
+		return (this.bigEndian ? this.BigUInt64BE : this.BigUInt64LE).call(this, offset);
+	}
 
-    getUInt8(...args) {
-        return this.readUInt8(...args);
-    }
+	BigUInt64BE(offset) {
+		return this._executeReadAndIncrement(8, Buffer.prototype.readBigUInt64BE, offset);
+	}
 
-    getUInt(...args) {
-        return this.readUInt(...args);
-    }
+	BigUInt64LE(offset) {
+		return this._executeReadAndIncrement(8, Buffer.prototype.readBigUInt64LE, offset);
+	}
 
-    readBigInt64(offset) {
-        return (this.bigEndian ? this.readBigInt64BE : this.readBigInt64LE).call(this, offset);
-    }
+	Double(offset) {
+		return (this.bigEndian ? this.DoubleBE : this.DoubleLE).call(this, offset);
+	}
 
-    readBigInt64BE(offset) {
-        return this._executeReadAndIncrement(8, Buffer.prototype.readBigInt64BE, offset);
-    };
+	DoubleBE(offset) {
+		return this._executeReadAndIncrement(1, Buffer.prototype.readDoubleBE, offset);
+	}
 
-    readBigInt64LE(offset) {
-        return this._executeReadAndIncrement(8, Buffer.prototype.readBigInt64LE, offset);
-    };
+	DoubleLE(offset) {
+		return this._executeReadAndIncrement(1, Buffer.prototype.readDoubleLE, offset);
+	}
 
-    readBigUInt64(offset) {
-        return (this.bigEndian ? this.readBigUInt64BE : this.readBigUInt64LE).call(this, offset);
-    }
+	Float(offset) {
+		return (this.bigEndian ? this.FloatBE : this.FloatLE).call(this, offset);
+	}
 
-    readBigUInt64BE(offset) {
-        return this._executeReadAndIncrement(8, Buffer.prototype.readBigUInt64BE, offset);
-    };
+	FloatBE(offset) {
+		return this._executeReadAndIncrement(4, Buffer.prototype.readFloatBE, offset);
+	}
 
-    readBigUInt64LE(offset) {
-        return this._executeReadAndIncrement(8, Buffer.prototype.readBigUInt64LE, offset);
-    };
+	FloatLE(offset) {
+		return this._executeReadAndIncrement(4, Buffer.prototype.readFloatLE, offset);
+	}
 
-    readDouble(offset) {
-        return (this.bigEndian ? this.readDoubleBE : this.readDoubleLE).call(this, offset);
-    }
+	Int16(offset) {
+		return (this.bigEndian ? this.Int16BE : this.Int16LE).call(this, offset);
+	}
 
-    readDoubleBE(offset) {
-        return this._executeReadAndIncrement(1, Buffer.prototype.readDoubleBE, offset);
-    };
+	Int16BE(offset) {
+		return this._executeReadAndIncrement(2, Buffer.prototype.readInt16BE, offset);
+	}
 
-    readDoubleLE(offset) {
-        return this._executeReadAndIncrement(1, Buffer.prototype.readDoubleLE, offset);
-    };
+	Int16LE(offset) {
+		return this._executeReadAndIncrement(2, Buffer.prototype.readInt16LE, offset);
+	}
 
-    readFloat(offset) {
-        return (this.bigEndian ? this.readFloatBE : this.readFloatLE).call(this, offset);
-    }
+	Int32(offset) {
+		return (this.bigEndian ? this.Int32BE : this.Int32LE).call(this, offset);
+	}
 
-    readFloatBE(offset) {
-        return this._executeReadAndIncrement(0.5, Buffer.prototype.readFloatBE, offset);
-    };
+	Int32BE(offset) {
+		return this._executeReadAndIncrement(4, Buffer.prototype.readInt32BE, offset);
+	}
 
-    readFloatLE(offset) {
-        return this._executeReadAndIncrement(0.5, Buffer.prototype.readFloatLE, offset);
-    };
+	Int32LE(offset) {
+		return this._executeReadAndIncrement(4, Buffer.prototype.readInt32LE, offset);
+	}
 
-    readInt16(offset) {
-        return (this.bigEndian ? this.readInt16BE : this.readInt16LE).call(this, offset);
-    }
+	Int(offset, byteLength) {
+		return (this.bigEndian ? this.IntBE : this.IntLE).call(this, offset, byteLength);
+	}
 
-    readInt16BE(offset) {
-        return this._executeReadAndIncrement(2, Buffer.prototype.readInt16BE, offset);
-    };
+	IntBE(offset, byteLength) {
+		return this._executeReadAndIncrement(byteLength, Buffer.prototype.readIntBE, offset, byteLength);
+	}
 
-    readInt16LE(offset) {
-        return this._executeReadAndIncrement(2, Buffer.prototype.readInt16LE, offset);
-    };
+	IntLE(offset, byteLength) {
+		return this._executeReadAndIncrement(byteLength, Buffer.prototype.readIntLE, offset, byteLength);
+	}
 
-    readInt32(offset) {
-        return (this.bigEndian ? this.readInt32BE : this.readInt32LE).call(this, offset);
-    }
+	Int8(offset) {
+		return this._executeReadAndIncrement(1, Buffer.prototype.readInt8, offset);
+	}
 
-    readInt32BE(offset) {
-        return this._executeReadAndIncrement(4, Buffer.prototype.readInt32BE, offset);
-    };
+	UInt16(offset) {
+		return (this.bigEndian ? this.UInt16BE : this.UInt16LE).call(this, offset);
+	}
 
-    readInt32LE(offset) {
-        return this._executeReadAndIncrement(4, Buffer.prototype.readInt32LE, offset);
-    };
+	UInt16BE(offset) {
+		return this._executeReadAndIncrement(2, Buffer.prototype.readUInt16BE, offset);
+	}
 
-    readInt(offset, byteLength) {
-        return (this.bigEndian ? this.readIntBE : this.readIntLE).call(this, offset, byteLength);
-    }
+	UInt16LE(offset) {
+		return this._executeReadAndIncrement(2, Buffer.prototype.readUInt16LE, offset);
+	}
 
-    readIntBE(offset, byteLength) {
-        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readIntBE, offset, byteLength);
-    };
+	UInt32(offset) {
+		return (this.bigEndian ? this.UInt32BE : this.UInt32LE).call(this, offset);
+	}
 
-    readIntLE(offset, byteLength) {
-        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readIntLE, offset, byteLength);
-    };
+	UInt32BE(offset) {
+		return this._executeReadAndIncrement(4, Buffer.prototype.readUInt32BE, offset);
+	}
 
-    readInt8(offset) {
-        return this._executeReadAndIncrement(1, Buffer.prototype.readInt8, offset);
-    };
+	UInt32LE(offset) {
+		return this._executeReadAndIncrement(4, Buffer.prototype.readUInt32LE, offset);
+	}
 
-    readUInt16(offset) {
-        return (this.bigEndian ? this.readUInt16BE : this.readUInt16LE).call(this, offset);
-    }
+	UInt8(offset) {
+		return this._executeReadAndIncrement(1, Buffer.prototype.readUInt8, offset);
+	}
 
-    readUInt16BE(offset) {
-        return this._executeReadAndIncrement(2, Buffer.prototype.readUInt16BE, offset);
-    };
+	UInt(offset, byteLength) {
+		return (this.bigEndian ? this.UIntBE : this.UIntLE).call(this, offset, byteLength);
+	}
 
-    readUInt16LE(offset) {
-        return this._executeReadAndIncrement(2, Buffer.prototype.readUInt16LE, offset);
-    };
+	UIntBE(offset, byteLength) {
+		return this._executeReadAndIncrement(byteLength, Buffer.prototype.readUIntBE, offset, byteLength);
+	}
 
-    readUInt32(offset) {
-        return (this.bigEndian ? this.readUInt32BE : this.readUInt32LE).call(this, offset);
-    }
-
-    readUInt32BE(offset) {
-        return this._executeReadAndIncrement(4, Buffer.prototype.readUInt32BE, offset);
-    };
-
-    readUInt32LE(offset) {
-        return this._executeReadAndIncrement(4, Buffer.prototype.readUInt32LE, offset);
-    };
-
-    readUInt8(offset) {
-        return this._executeReadAndIncrement(1, Buffer.prototype.readUInt8, offset);
-    };
-
-    readUInt(offset, byteLength) {
-        return (this.bigEndian ? this.readUIntBE : this.readUIntLE).call(this, offset, byteLength);
-    }
-
-    readUIntBE(offset, byteLength) {
-        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readUIntBE, offset, byteLength);
-    };
-
-    readUIntLE(offset, byteLength) {
-        return this._executeReadAndIncrement(byteLength, Buffer.prototype.readUIntLE, offset, byteLength);
-    };
-
-    /* ---------------- END OF AUTO-GENERATED CODE -------------------- */
+	UIntLE(offset, byteLength) {
+		return this._executeReadAndIncrement(byteLength, Buffer.prototype.readUIntLE, offset, byteLength);
+	}
 
 }
+
+// Let's build aliases of functons with lowercased names 
+Object.getOwnPropertyNames(CleverBufferReader.prototype)
+	.filter(name => !['constructor'].includes(name))
+	.forEach(name => CleverBufferReader.prototype[name.toLowerCase()] = CleverBufferReader.prototype[name]);
 
 module.exports = CleverBufferReader;

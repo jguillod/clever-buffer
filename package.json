@@ -1,6 +1,6 @@
 {
   "name": "@imed.ch/clever-buffer",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "Buffer utilities",
   "author": "imed.ch (original forked from Tabcorp Digital Technology Team, https://github.com/Tabcorp/clever-buffer.git)",
   "license": "MIT",
@@ -13,14 +13,16 @@
   },
   "main": "src/clever-buffer.js",
   "scripts": {
-    "test": "mocha \"test/**/*.js\"",
-    "prepublish": "npm test"
+    "test": "mocha \"test/**/*.js\""
   },
   "dependencies": {},
   "devDependencies": {
+    "should": "13.2.3",
+    "lodash": "4.17.15",
     "cli-table": "^0.3.1",
-    "lodash": "^4.17.15",
-    "mocha": "~7.0.0",
-    "should": "~13.2.1"
-  }
+    "pre-commit": "1.2.2"
+  },
+  "pre-commit": [
+    "test"
+  ]
 }

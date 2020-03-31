@@ -15,6 +15,7 @@ CleverBuffer adds functionality that is missing from the node Buffer class
 * One time specification of endian-ness and whether to assert on buffer length
 * 64 bit integer support. We dont use any non standard NodeJS 12.x dependencies.
 ## Installation
+
 ``` js
 npm install @imed.ch/clever-buffer
 ```
@@ -375,106 +376,35 @@ console.log(buf);           // [0xFF, 0x02]
 
 ## API signatures
 
-### Reader API
+### Reader/Writer API ###
 
-```
-getString(options = {})   alias readString 
-getBytes(options = {})    alias readBytes
-readBigInt64(offset)
-readBigInt64BE(offset)
-readBigInt64LE(offset) 
-readBigUInt64(offset)
-readBigUInt64BE(offset)
-readBigUInt64LE(offset) 
-readDouble8(offset)
-readDouble8BE(offset)
-readDouble8LE(offset) 
-readFloat4(offset)
-readFloat4BE(offset)
-readFloat4LE(offset) 
-readInt16(offset)
-readInt16BE(offset)
-readInt16LE(offset) 
-readInt32(offset)
-readInt32BE(offset)
-readInt32LE(offset) 
-readInt(offset, byteLength)
-readIntBE(offset, byteLength)
-readIntLE(offset, byteLength) 
-readInt8(offset)
-readUInt16(offset)
-readUInt16BE(offset)
-readUInt16LE(offset) 
-readUInt32(offset)
-readUInt32BE(offset)
-readUInt32LE(offset) 
-readUInt8(offset)
-readUInt(offset, byteLength)
-readUIntBE(offset, byteLength)
-readUIntLE(offset, byteLength) 
-getBigInt64(...args)       // alias to readBigInt64(...args)
-getBigUInt64(...args)      // alias to readBigUInt64(...args)
-getDouble8(...args)        // alias to readDouble8(...args)
-getFloat4(...args)         // alias to readFloat4(...args)
-getInt16(...args)          // alias to readInt16(...args)
-getInt32(...args)          // alias to readInt32(...args)
-getInt(...args)            // alias to readInt(...args)
-getInt8(...args)           // alias to readInt8(...args)
-getUInt16(...args)         // alias to readUInt16(...args)
-getUInt32(...args)         // alias to readUInt32(...args)
-getUInt8(...args)          // alias to readUInt8(...args)
-getUInt(...args)           // alias to readUInt(...args)
-```
+	value = reader[type](offset);
+	value = reader[type]();
+	reader.AsString({
+		length, // number of bytes to write (byte length ≠ char length depending on encoding)
+		offset, // Number of bytes to skip before starting to write string.
+		encoding, // The character encoding of string, default 'utf8'
+	});
+	
+	writer[type](value, offset);
+	writer[type](value);
+	writer.AsString(value, {
+		length, // number of bytes to write (byte length ≠ char length depending on encoding)
+		offset, // Number of bytes to skip before starting to write string.
+		encoding, // The character encoding of string, default 'utf8'
+	});
 
-### writer API
-```
-writeString(string, options = {})
-writeBytes(value, options = {})
-writeBigInt64(value, offset)
-writeBigInt64BE(value, offset)
-writeBigInt64LE(value, offset) 
-writeBigUInt64(value, offset)
-writeBigUInt64BE(value, offset)
-writeBigUInt64LE(value, offset) 
-writeDouble8(value, offset)
-writeDouble8BE(value, offset)
-writeDouble8LE(value, offset) 
-writeFloat4(value, offset)
-writeFloat4BE(value, offset)
-writeFloat4LE(value, offset) 
-writeInt16(value, offset)
-writeInt16BE(value, offset)
-writeInt16LE(value, offset) 
-writeInt32(value, offset)
-writeInt32BE(value, offset)
-writeInt32LE(value, offset) 
-writeInt8(value, offset)
-writeInt(value, offset, byteLength)
-writeIntBE(value, offset, byteLength)
-writeIntLE(value, offset, byteLength) 
-writeUInt16(value, offset)
-writeUInt16BE(value, offset)
-writeUInt16LE(value, offset) 
-writeUInt32(value, offset)
-writeUInt32BE(value, offset)
-writeUInt32LE(value, offset) 
-writeUInt8(value, offset)
-writeUInt(value, offset, byteLength)
-writeUIntBE(value, offset, byteLength)
-writeUIntLE(value, offset, byteLength) 
-setBigInt64(...args)       // alias to writeBigInt64(...args)
-setBigUInt64(...args)      // alias to writeBigUInt64(...args)
-setDouble8(...args)        // alias to writeDouble8(...args)
-setFloat4(...args)         // alias to writeFloat4(...args)
-setInt16(...args)          // alias to writeInt16(...args)
-setInt32(...args)          // alias to writeInt32(...args)
-setInt8(...args)           // alias to writeInt8(...args)
-setInt(...args)            // alias to writeInt(...args)
-setUInt16(...args)         // alias to writeUInt16(...args)
-setUInt32(...args)         // alias to writeUInt32(...args)
-setUInt8(...args)          // alias to writeUInt8(...args)
-setUInt(...args)           // alias to writeUInt(...args)
-```
+where type is one of&nbsp;:
+
+	AsString Bytes
+	UTF8 // alias to  AsString() but enforce UTF-8 encoding.
+	BigInt64 BigInt64BE BigInt64LE BigUInt64 BigUInt64BE BigUInt64LE Bytes Double DoubleBE DoubleLE Float Float32 Float32BE Float32LE FloatBE FloatLE Int Int16 Int16BE Int16LE Int32 Int32BE Int32LE Int8 IntBE IntLE SFloat SFloatBE SFloatLE UInt UInt16 UInt16BE UInt16LE UInt32 UInt32BE UInt32LE UInt8 UIntBE UIntLE
+
+in lower case is also equivalent :
+	asstring bytes utf8
+	bigint64 bigint64be bigint64le biguint64 biguint64be biguint64le bytes double doublebe doublele float float32 float32be float32le floatbe floatle int int16 int16be int16le int32 int32be int32le int8 intbe intle sfloat sfloatbe sfloatle uint uint16 uint16be uint16le uint32 uint32be uint32le uint8 uintbe uintle
+
+
 
 ## Testing
 

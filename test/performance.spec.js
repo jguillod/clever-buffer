@@ -40,17 +40,17 @@ var readUnit8 = () => {
   const buf = Buffer.from([0x52,0x45,0x54,0x55,0x52,0x4e,0x20,0x4f,0x46]);
   const cleverBuffer = new CleverBufferReader(buf);
   _.range(0, (buf.length - 1), true).map((i) =>
-    assert.equal(cleverBuffer.getUInt8(), buf.readUInt8(i)));
+    assert.equal(cleverBuffer.UInt8(), buf.readUInt8(i)));
 };
 
 var readBigUInt64 = () => {
   const buf = Buffer.from([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]);
   const cleverBuffer = new CleverBufferReader(buf);
-  assert.equal(cleverBuffer.getBigUInt64(), 18446744073709551615n);
+  assert.equal(cleverBuffer.BigUInt64(), 18446744073709551615n);
 };
 
 var readString = () => {
   const buf = Buffer.from([0x48, 0x45, 0x4C, 0x4C, 0x4F]);
   const cleverBuffer = new CleverBufferReader(buf);
-  assert.equal(cleverBuffer.getString({length: 5}), 'HELLO');
+  assert.equal(cleverBuffer.AsString({length: 5}), 'HELLO');
 };

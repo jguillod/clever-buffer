@@ -1,4 +1,4 @@
-const CleverBufferWriter = require(`${SRC}/clever-buffer-writer`);
+const {CleverBufferWriter} = require('../../');
 
 exports.writeToStupidBuffer = (values, numberOfBytesPerWord, writeFunction) => {
   const buf = Buffer.alloc(values.length*numberOfBytesPerWord);
